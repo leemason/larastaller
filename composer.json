@@ -1,0 +1,22 @@
+{
+    "name": "leemason/larastaller",
+    "description": "The Larastaller package provides a fluent interface via web or artisan to install/upgrade your project.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "leemason",
+            "email": "contact@nohalfpixels.com"
+        }
+    ],
+    "require": {
+        "laravel/framework": "5.1.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LeeMason\\Larastaller\\": "src"
+        }
+    }
+}
