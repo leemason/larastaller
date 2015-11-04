@@ -11,17 +11,14 @@ namespace LeeMason\Larastaller;
 
 use Illuminate\Support\ServiceProvider;
 use LeeMason\Larastaller\Commands\InstallCommand;
-use LeeMason\Larastaller\Requirements\MbStringRequirement;
-use LeeMason\Larastaller\Requirements\OpenSSLRequirement;
-use LeeMason\Larastaller\Requirements\PdoRequirement;
-use LeeMason\Larastaller\Requirements\PhpVersionRequirement;
-use LeeMason\Larastaller\Requirements\TokenizerRequirement;
-use LeeMason\Larastaller\Tasks\MigrateTask;
 
 class LarastallerServiceProvider extends ServiceProvider
 {
 
     public function register(){
+
+        $configPath = __DIR__ . '/../config/larastaller.php';
+        $this->mergeConfigFrom($configPath, 'larastaller');
 
         //responsible for defining the versions and actions
         $this->app->singleton(Definition::class, function($app){
@@ -42,18 +39,12 @@ class LarastallerServiceProvider extends ServiceProvider
 
     public function boot(Definition $definition, Installer $installer, Installation $installation){
 
-        $definition->addRequirement(PhpVersionRequirement::class);
-        $definition->addRequirement(PdoRequirement::class);
-        $definition->addRequirement(MbStringRequirement::class);
-        $definition->addRequirement(OpenSSLRequirement::class);
-        $definition->addRequirement(TokenizerRequirement::class);
+        $configPath = __DIR__ . '/../config/larastaller.php';
+        $this->publishes([$configPath => config_path('larastaller.php')], 'config');
 
+        $definition->setRequirements(config('larastaller.requirements'));
+        $definition->setVersions(config('larastaller.versions'));
 
-        $version = new Version('1.0.0');
-        $version->addChange('this is a change for v1.0.0');
-        $version->addTask(MigrateTask::class);
-
-        $definition->addVersion($version);
 
         if(!$installation->isInstalled()) {
             //register install command

@@ -25,6 +25,15 @@ abstract class Field extends Fluent implements FieldInterface
         return $this->get('label', '');
     }
 
+    public function getConsoleLabel(){
+        return $this->get('console_label', $this->getLabel());
+    }
+
+    public function getDescription()
+    {
+        return $this->get('description', '');
+    }
+
 
     public function getValidator($value)
     {

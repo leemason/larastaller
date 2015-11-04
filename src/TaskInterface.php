@@ -9,6 +9,9 @@
 namespace LeeMason\Larastaller;
 
 
+use Illuminate\Support\Collection;
+use Symfony\Component\Console\Output\OutputInterface;
+
 interface TaskInterface
 {
 
@@ -22,7 +25,9 @@ interface TaskInterface
 
     public function getField($id);
 
-    public function run();
+    public function setInput(Collection $input);
+
+    public function run(OutputInterface $output);
 
     public function handle();
 

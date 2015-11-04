@@ -13,7 +13,7 @@ use Illuminate\Contracts\Console\Kernel;
 use LeeMason\Larastaller\Task;
 use LeeMason\Larastaller\TaskInterface;
 
-class MigrateTask extends Task implements TaskInterface
+class AppKeyTask extends Task implements TaskInterface
 {
     public $title = 'Database Migration';
 
@@ -25,7 +25,7 @@ class MigrateTask extends Task implements TaskInterface
 
     public function handle()
     {
-        $this->artisan->call('migrate');
+        $this->artisan->call('key:generate');
         foreach (array_filter(explode("\n", $this->artisan->output())) as $line){
             $this->output->writeLn($line);
         }

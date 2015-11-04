@@ -26,14 +26,6 @@ class Version
         $this->changes = collect([]);
     }
 
-    public function addTask($task){
-        $this->tasks->push($task);
-    }
-
-    public function addChange($change){
-        $this->changes->push($change);
-    }
-
     public function setChanges($changes)
     {
         $this->changes = collect($changes);
@@ -44,14 +36,13 @@ class Version
         return $this->changes;
     }
 
+    public function setTasks($tasks){
+        $this->tasks = collect($tasks);
+    }
+
     public function getTasks()
     {
         return $this->tasks;
     }
-
-    public function setTasks($tasks){
-        $this->tasks = $tasks;
-    }
-
 
 }

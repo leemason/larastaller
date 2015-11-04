@@ -21,7 +21,7 @@ class PhpVersionRequirement extends Requirement implements RequirementInterface
     public $error = 'The PHP version found is lower than is required!';
 
     public function test(){
-        return version_compare(PHP_VERSION, '5.5.0', '>=');
+        return version_compare(PHP_VERSION, '5.5.9', '>=');
     }
 
 }

@@ -9,8 +9,6 @@
 namespace LeeMason\Larastaller;
 
 
-use Illuminate\Contracts\Foundation\Application;
-
 class Definition
 {
 
@@ -23,27 +21,28 @@ class Definition
         $this->requirements = collect([]);
     }
 
-    public function addVersion(Version $version){
-        $this->versions->put($version->version, $version);
-        $this->versions = $this->versions->sort();
-        return $this;
-    }
-
-    public function forVersion($version){
-        $obj = $this->versions->get($version);
-        if(is_null($obj)){
-            $this->addVersion(new Version($version));
-            return $this->forVersion($version);
+    public function getAllRequirements(){
+        $requirements = $this->getRequirements();
+        $versions = $this->getVersions();
+        foreach($versions as $version){
+            $requirements = $requirements->merge($version->getRequirements()->toArray());
         }
-        return $obj;
+        return $requirements;
     }
 
-    /**
-     * @return array|\Illuminate\Support\Collection
-     */
     public function getVersions()
     {
         return $this->versions;
+    }
+
+    public function setVersions($versions = []){
+        $this->versions = collect($versions)->map(function($value, $version){
+            $obj = new Version($version);
+            $obj->setChanges($value['changes']);
+            $obj->setRequirements($value['requirements']);
+            $obj->setTasks($value['tasks']);
+            return $obj;
+        });
     }
 
     public function getLatestVersion(){

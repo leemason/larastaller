@@ -9,6 +9,9 @@
 namespace LeeMason\Larastaller;
 
 
+use Illuminate\Support\Collection;
+use Symfony\Component\Console\Output\OutputInterface;
+
 abstract class Task implements TaskInterface
 {
     public $title;
@@ -22,6 +25,10 @@ abstract class Task implements TaskInterface
     public $fields = [];
 
     public $fieldValues = [];
+
+    public $input;
+
+    public $output;
 
     public function getTitle()
     {
@@ -61,7 +68,17 @@ abstract class Task implements TaskInterface
         });
     }
 
-    public function run(){
+    public function setInput(Collection $input){
+        $this->input = $input;
+    }
+
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    public function run(OutputInterface $output){
+        $this->output = $output;
         $this->handle();
     }
 

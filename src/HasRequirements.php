@@ -15,16 +15,14 @@ trait HasRequirements
 {
     public $requirements = [];
 
-    public function addRequirement($requirement){
-        if(!$this->requirements instanceof Collection){
-            $this->requirements = collect([]);
-        }
-        $this->requirements->push($requirement);
-    }
-
     public function getRequirements()
     {
         return $this->requirements;
+    }
+
+    public function setRequirements($requirements = [])
+    {
+        $this->requirements = collect($requirements);
     }
 
 }

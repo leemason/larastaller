@@ -13,11 +13,11 @@ use Illuminate\Console\Command;
 use LeeMason\Larastaller\Field;
 use LeeMason\Larastaller\FieldInterface;
 
-class TextField extends Field implements FieldInterface
+class ChoiceField extends Field implements FieldInterface
 {
     public function renderCommandField(Command $command){
         while(true){
-            $input = $command->ask($this->getConsoleLabel() , $this->get('default', null));
+            $input = $command->choice($this->getConsoleLabel(), $this->get('choices', []) , $this->get('default', null));
             $validator = $this->getValidator($input);
             if($validator->passes()){
                 return $input;
