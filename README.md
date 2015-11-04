@@ -73,7 +73,9 @@ The Larastaller package has been developed with Laravel 5.1, i see no reason why
 
 The larastaller package comes with multiple installer commands which are listed below:
 
-``` php artisan installer:install```
+```
+php artisan installer:install
+```
 
 This will:
 
@@ -84,7 +86,9 @@ This will:
 - If all tasks complete successfully save the installation details into the ```storage_path('installation.json');``` file
 - Report the install as a success and exit
 
-``` php artisan installer:changes $version```
+```
+php artisan installer:changes $version
+```
 
 ```$version```` Possible values ["latest", "last-x" eg (last-5), "version" string eg (1.1.1), "all"]
 
