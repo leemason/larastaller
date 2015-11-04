@@ -71,7 +71,7 @@ The Larastaller package has been developed with Laravel 5.1, i see no reason why
 
 ### artisan
 
-The larastaller package comes with an install command which is access by:
+The larastaller package comes with multiple installer commands which are listed below:
 
 ``` php artisan installer:install```
 
@@ -83,6 +83,12 @@ This will:
 - If a task throws and exception, the install will cease
 - If all tasks complete successfully save the installation details into the ```storage_path('installation.json');``` file
 - Report the install as a success and exit
+
+``` php artisan installer:changes $version```
+
+```$version```` Possible values ["latest", "last-x" eg (last-5), "version" string eg (1.1.1), "all"]
+
+This will fetch the version(s) requested and display the changes added to the version array as a list.
 
 
 

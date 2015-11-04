@@ -10,6 +10,7 @@ namespace LeeMason\Larastaller;
 
 
 use Illuminate\Support\ServiceProvider;
+use LeeMason\Larastaller\Commands\ChangesCommand;
 use LeeMason\Larastaller\Commands\InstallCommand;
 
 class LarastallerServiceProvider extends ServiceProvider
@@ -44,6 +45,8 @@ class LarastallerServiceProvider extends ServiceProvider
 
         $definition->setRequirements(config('larastaller.requirements'));
         $definition->setVersions(config('larastaller.versions'));
+
+        $this->commands([ChangesCommand::class]);
 
 
         if(!$installation->isInstalled()) {
