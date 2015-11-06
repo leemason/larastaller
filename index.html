@@ -125,6 +125,193 @@
 <p><code>$version</code>` Possible values ["latest", "last-x" eg (last-5), "version" string eg (1.1.1), "all"]</p>
 
 <p>This will fetch the version(s) requested and display the changes added to the version array as a list.</p>
+
+<h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>Included with the package is a config/larastaller.php file where the base config is loaded from, with an empty versions array.</p>
+
+<p>This (after following the install steps above) gets copied to your applications config folder and should contain all of your custom requirements and versions.</p>
+
+<p>The first key in the array is the list of requirements for installation (independent of any version).</p>
+
+<p>Included with the package are some requirement classes which provide requirements that must be fulfilled for any laravel application, but if you have other requirements specific to your app you should append them here.</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-s"><span class="pl-pds">'</span>requirements<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">PhpVersionRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">PdoRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">MbStringRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">OpenSSLRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">TokenizerRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">FolderPermissionsRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">    <span class="pl-c1">\LeeMason\Larastaller\Requirements\</span><span class="pl-c1">EnvFileRequirement</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">],</span></pre></div>
+
+<p>The second item is the versions array, this contains an array of versions for the application.</p>
+
+<p>Each version should be added as an index in the array with the version details as the keys value.</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-s"><span class="pl-pds">'</span>versions<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>1.0.0<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">        <span class="pl-s"><span class="pl-pds">'</span>changes<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">            <span class="pl-s"><span class="pl-pds">'</span>this is a change<span class="pl-pds">'</span></span></span>
+<span class="pl-s1">        ],</span>
+<span class="pl-s1">        <span class="pl-s"><span class="pl-pds">'</span>requirements<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">        ],</span>
+<span class="pl-s1">        <span class="pl-s"><span class="pl-pds">'</span>tasks<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">            <span class="pl-c1">\LeeMason\Larastaller\Tasks\</span><span class="pl-c1">AppKeyTask</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">            <span class="pl-c1">\LeeMason\Larastaller\Tasks\</span><span class="pl-c1">MigrateTask</span><span class="pl-k">::</span><span class="pl-c1">class</span>,</span>
+<span class="pl-s1">        ],</span>
+<span class="pl-s1">    ],</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>1.0.1<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> [</span>
+<span class="pl-s1">        <span class="pl-c">//..</span></span>
+<span class="pl-s1">    ],</span>
+<span class="pl-s1">],</span></pre></div>
+
+<p>Each version should contain an array of changes, and array of requirements (useful if server requirements change per version), and a tasks array.</p>
+
+<h2>
+<a id="the-definition-class" class="anchor" href="#the-definition-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Definition Class</h2>
+
+<p>The <code>LeeMason\Larastaller\Definition class is quite simply a data storage object which allows more fluent access to the configuration, and news up</code>LeeMason\Laratsaller\Version``` instances for each version.</p>
+
+<p>It has a public api, but is designed soley for insternal usage via the Larastaller package.</p>
+
+<h2>
+<a id="requirement-classes" class="anchor" href="#requirement-classes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirement Classes</h2>
+
+<p>Requirement Classes are used to test the environment is suitable for the application to be installed.</p>
+
+<p>They must implement the <code>LeeMason\Larastaller\RequirementInterface</code> and ideally extends the abstract <code>LeeMason\Larastaller\Requirement</code> class.</p>
+
+<p>Each requirement class should contain the public properties <code>$description</code>, <code>$success</code>, <code>$error</code> with descriptive strings explain the requirement and providing user friendly messages.</p>
+
+<p>A requirement class can optionally include a <code>__construct()</code> method to inject any dependencies via the ServiceContainer and these will automatically be resolved.</p>
+
+<p>The last and most important method a requirement class <strong>MUST</strong> provide is a <code>test()</code> method which should return a boolean true/false depending on if the requirement has been fulfilled.</p>
+
+<p>Most requirements just test the existence of the requirement, but the <code>EnvFileRequirement</code> is a special case as this will automatically copy the .env.example to .env if no .env file is present before testing.</p>
+
+<p>This was chosen over making it a task simply because of a laravel application lifecycle.</p>
+
+<h2>
+<a id="task-classes" class="anchor" href="#task-classes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Task Classes</h2>
+
+<p>Task Classes are used to perform the tasks needed to install the application.</p>
+
+<p>They must implement the <code>LeeMason\Larastaller\TaskInterface</code> and ideally extends the abstract <code>LeeMason\Larastaller\Task</code> class.</p>
+
+<p>Each task class should contain the public property <code>$title</code> with a descriptive string explaining the tasks function.</p>
+
+<p>A task class can optionally include a <code>__construct()</code> method to inject any dependencies via the ServiceContainer and these will automatically be resolved.</p>
+
+<p>For the task to actually perform anything it should include a <code>handle()</code> method.</p>
+
+<p>This method can do anything from running artisan commands, to altering database tables.</p>
+
+<p>If the task should provide any user feedback messages during execution it can do so by using its <code>$this-&gt;output</code> property which will always be in stance of <code>Symfony\Component\Console\Output\OutputInterface</code>.</p>
+
+<p>This allows the task to add output by using the <code>$this-&gt;output-&gt;writeLn('...');</code> method.</p>
+
+<p>Included with the package are some basic tasks to get you started:</p>
+
+<pre><code>LeeMason\Larastaller\Tasks\AppKeyTask
+</code></pre>
+
+<p>This task is very simple and performs the <code>php artisan key:generate</code> command, returning its output.</p>
+
+<p>We suggest this task be the first task registered for the first version you include.</p>
+
+<pre><code>LeeMason\Larastaller\Tasks\MigrateTask
+</code></pre>
+
+<p>This task on its own will simply perform the same function as calling <code>php artisan migrate</code>, so it is a useful task that can be added to any version which adds migrations to your application.</p>
+
+<p>However its also been designed specifically with extendability in mind.</p>
+
+<p>For example if you need to migrate a package, or provide options to the migrate command, you can extend the class and add your parameters to the <code>$parameters</code> array.</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">LeeMason\Larastaller\Tasks\MigrateTask</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">MigratePackageTask</span> <span class="pl-k">extends</span> <span class="pl-e">MigrateTask</span>{</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-k">protected</span> <span class="pl-smi">$parameters</span> <span class="pl-k">=</span> [</span>
+<span class="pl-s1">        <span class="pl-s"><span class="pl-pds">'</span>--path<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>vendor/name/package/migrations<span class="pl-pds">'</span></span></span>
+<span class="pl-s1">    ];</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">}</span></pre></div>
+
+<p>This will run: <code>php artisan migrate --path=vendor/name/package/migrations</code></p>
+
+<h2>
+<a id="the-installation-class" class="anchor" href="#the-installation-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Installation Class</h2>
+
+<p>The <code>LeeMason\Larastaller\Installation</code> class is a class responsible for fetching and updating the applications <code>storage_path('installation.json')</code> file.</p>
+
+<p>It extends the <code>Illuminate\Support\Collection</code> class and all items from the <code>storage_path('installation.json')</code> file are stored as key &gt; value items.</p>
+
+<p>This class can provide and save data about the installation and it used by the <code>LeeMason\Larastaller\Installer</code> class for checking if the appliction is installed, and if it is up to date.</p>
+
+<p>It is registered in the service container so can be injected and provides the public methods: <code>$installation-&gt;isInstalled()</code>, <code>$installation-&gt;isUpdated()</code> on top of the Collection classes methods.</p>
+
+<p>If you need to persist changes or additions to the installation.json file always make sure you call the <code>$installation-&gt;save()</code> method.</p>
+
+<h2>
+<a id="the-installer-class" class="anchor" href="#the-installer-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Installer Class</h2>
+
+<p>The <code>LeeMason\Larastaller\Installer</code> class is responsible for matching installed version against versions declared and generally formatting the configuration of tasks, requirements, etc fo use via the http and command based install methods.</p>
+
+<p>It provides no public api usable outside of its duties.</p>
+
+<h2>
+<a id="faq" class="anchor" href="#faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>FAQ</h2>
+
+<p><strong>Why not just use version control?</strong></p>
+
+<p>Version control is great, and the way we have designed the configuration for the package to best use the features of version control.</p>
+
+<p>But services like git/svn etc can't for example:</p>
+
+<ul>
+<li>Clear caches on updates</li>
+<li>Modify database data between versions</li>
+<li>Alert to the need of new env vars</li>
+<li>etc</li>
+</ul>
+
+<p>Sure each one of the those can be done manually, or even via multiple artisan commands, but the user needs to know those changes are needed.</p>
+
+<p>With the larastaller config saved in version control anyone who needs to install it can just run <code>installer:install</code> without a task list in front of them.</p>
+
+<p><strong>Does this replace the need for composer?</strong></p>
+
+<p>No it doesn't and we wouldn't want to either.</p>
+
+<p>What it does mean is you can distribute your application with one simple step.</p>
+
+<p>Simply add <code>"php artisan installer:install"</code> to your composer.json files <code>"post-install-command"</code> array.</p>
+
+<p>Then the install proccess will happen after <code>composer install</code>.</p>
+
+<p>** If you would prefer to use the web api simply distribute your application with the vendor directory propigated and direct them to the install url.</p>
+
+<h2>
+<a id="notes" class="anchor" href="#notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Notes</h2>
+
+<p>Its still in early development, functionality yet to be included is:</p>
+
+<p>Web api for installing
+Updating existing installs</p>
+
+<h2>
+<a id="the-future" class="anchor" href="#the-future" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Future</h2>
+
+<ul>
+<li>Add web api/route</li>
+<li>Add installer:update command</li>
+<li>Minor functionality improvements</li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/leemason">leemason</a></p>
