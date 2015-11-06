@@ -15,7 +15,7 @@ use LeeMason\Larastaller\TaskInterface;
 
 class AppKeyTask extends Task implements TaskInterface
 {
-    public $title = 'Database Migration';
+    public $title = 'App Key Generation';
 
     private $artisan;
 

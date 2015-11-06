@@ -46,17 +46,12 @@ class LarastallerServiceProvider extends ServiceProvider
         $definition->setRequirements(config('larastaller.requirements'));
         $definition->setVersions(config('larastaller.versions'));
 
-        $this->commands([ChangesCommand::class]);
+        $this->commands([InstallCommand::class, ChangesCommand::class]);
 
 
         if(!$installation->isInstalled()) {
-            //register install command
-            if($this->app->runningInConsole()) {
-                $this->commands([InstallCommand::class]);
-            }else{
-                //run the installer
-                $installer->run();
-            }
+            //run the installer
+            $installer->run();
         }elseif(!$installation->isUpdated()){
             //run upgrader
         }
