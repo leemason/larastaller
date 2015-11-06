@@ -75,33 +75,6 @@ class Installer
         return $this->resolvedTasks[$version->version];
     }
 
-    public function getTotalSteps(){
-        return (
-            $this->getTaskFieldsCount() +
-            $this->getTaskCount()
-        );
-    }
-
-    public function getTaskFieldsCount(){
-        $count = 0;
-        foreach($this->getVersions() as $version){
-            $tasks = $this->getTasksForVersion($version);
-            foreach($tasks as $task){
-                $count += $task->getFields()->count();
-
-            }
-        }
-        return $count;
-    }
-
-    public function getTaskCount(){
-        $count = 0;
-        foreach($this->getVersions() as $version){
-            $count += $version->getTasks()->count();
-        }
-        return $count;
-    }
-
     /**
      * @return array
      */

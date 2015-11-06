@@ -80,11 +80,14 @@ php artisan installer:install
 This will:
 
 - Run through requirements for all versions, test them and report any errors.
-- Request via console questions, passwords, choices and true/false fields all of the data requested by each task
+- Request via console questions, passwords, choices and true/false fields all of the data requested by each task**
 - Resolve each task class and perform the tasks ```handle()``` function
 - If a task throws and exception, the install will cease
 - If all tasks complete successfully save the installation details into the ```storage_path('installation.json');``` file
 - Report the install as a success and exit
+
+** This wont happen if you provide the option ```--path``` which can point to a json encoded file of key > value pairs for input values.
+This is especially useful during a deployment process where ```--no-interaction``` is used.
 
 ```
 php artisan installer:changes $version
@@ -145,7 +148,7 @@ Each version should contain an array of changes, and array of requirements (usef
 
 ## The Definition Class
 
-The ```LeeMason\Larastaller\Definition class is quite simply a data storage object which allows more fluent access to the configuration, and news up ```LeeMason\Laratsaller\Version``` instances for each version.
+The ```LeeMason\Larastaller\Definition``` class is quite simply a data storage object which allows more fluent access to the configuration, and news up ```LeeMason\Laratsaller\Version``` instances for each version.
 
 It has a public api, but is designed soley for insternal usage via the Larastaller package.
 
@@ -196,6 +199,15 @@ This task is very simple and performs the ``` php artisan key:generate``` comman
 We suggest this task be the first task registered for the first version you include.
 
 
+```
+LeeMason\Larastaller\Tasks\OptimizeTask
+```
+
+This task is very simple and performs the ``` php artisan clear-compiled && php artisan optimize --force``` command, returning its output.
+
+We suggest this task be the last task registered for the every version you include because whenever someone installs or updates you can regenerate the compiled classes file.
+
+
 
 ```
 LeeMason\Larastaller\Tasks\MigrateTask
@@ -237,7 +249,7 @@ If you need to persist changes or additions to the installation.json file always
 
 ## The Installer Class
 
-The ```LeeMason\Larastaller\Installer``` class is responsible for matching installed version against versions declared and generally formatting the configuration of tasks, requirements, etc fo use via the http and command based install methods.
+The ```LeeMason\Larastaller\Installer``` class is responsible for matching installed version against versions declared and generally formatting the configuration of tasks, requirements, etc for use via the http and command based install methods.
 
 It provides no public api usable outside of its duties.
 
@@ -278,6 +290,7 @@ Its still in early development, functionality yet to be included is:
 
 Web api for installing
 Updating existing installs
+Events for install/update
 
 
 ## The Future

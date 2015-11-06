@@ -10,23 +10,27 @@ namespace LeeMason\Larastaller\Commands;
 
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use LeeMason\Larastaller\Installer;
 use LeeMason\Larastaller\TaskRunException;
 
 class InstallCommand extends Command
 {
 
-    protected $signature = 'installer:install';
+    protected $signature = 'installer:install {--path= : Supply a path to key > value pairs in json format when running the installer, especially useful when used in conjunction with --no-interaction}';
 
     protected $description = 'Installs the application';
 
     private $installer;
 
+    private $filesystem;
 
-    public function __construct(Installer $installer)
+
+    public function __construct(Installer $installer, Filesystem $filesystem)
     {
         parent::__construct();
         $this->installer = $installer;
+        $this->filesystem = $filesystem;
     }
 
     public function handle()
@@ -36,14 +40,9 @@ class InstallCommand extends Command
             return;
         }
 
-        $bar = $this->output->createProgressBar((6 + $this->installer->getTotalSteps()));
-
-        $bar->advance();$this->info('');//fix line break
-
         $this->info('Welcome to the installer!');
 
         //test requirements
-        $bar->advance();$this->info('');//fix line break
         $this->info('Checking Requirements...');
 
         $messages = $this->installer->testRequirements();
@@ -62,27 +61,34 @@ class InstallCommand extends Command
                 $this->line($message);
             }
             $this->info('Congratulations, your system passed all of the requirements!');
-            if (!$this->confirm('Do you wish to continue? [y|N]')) {
+            if (!$this->confirm('Do you wish to continue? [y|N]', true)) {
                 return;
             }
-            $bar->advance();$this->info('');//fix line break
         }
 
-        //fetch any details needed
-        $values = collect([]);
+        //get versions ready
         $versions = $this->installer->getVersions();
 
-        foreach($versions as $version){
-            $tasks = $this->installer->getTasksForVersion($version);
-            foreach($tasks as $task){
-                $fields = $task->getFields();
-                if(count($fields) > 0){
-                    $this->info($task->getDescription());
-                    foreach($fields as $field){
-                        $value = $field->renderCommandField($this);
-                        $values->put($field->getID(), $value);
-                        $bar->advance();
-                        $this->info('');//fix line break
+        //fetch any details needed
+        $dataFilePath = $this->option('path');
+        if(!is_null($dataFilePath)){
+            if(!$this->filesystem->exists($dataFilePath)){
+                $this->error($dataFilePath . ' doesn\'t exist, installer exiting!');
+                return;
+            }
+            $values = collect(json_decode($this->filesystem->get($dataFilePath), true));
+        }else{
+            $values = collect([]);
+            foreach($versions as $version){
+                $tasks = $this->installer->getTasksForVersion($version);
+                foreach($tasks as $task){
+                    $fields = $task->getFields();
+                    if(count($fields) > 0){
+                        $this->info($task->getDescription());
+                        foreach($fields as $field){
+                            $value = $field->renderCommandField($this);
+                            $values->put($field->getID(), $value);
+                        }
                     }
                 }
             }
@@ -90,19 +96,14 @@ class InstallCommand extends Command
 
         $this->installer->setFieldValues($values->toArray());
 
-        if($values->count() < 1){
+        if($values->count() > 0){
             if ($this->confirm('Do you wish to review your information? [y|N]')) {
                 $this->table(['Field', 'Value'], $values->map(function($item, $key){return [$key, $item];})->toArray());
             }
-            $bar->advance();$this->info('');//fix line break
 
-            if (!$this->confirm('Everything is set, do you want to continue and finish the install? [y|N]')) {
+            if (!$this->confirm('Everything is set, do you want to continue and finish the install? [y|N]', true)) {
                 return;
             }
-            $bar->advance();$this->info('');//fix line break
-        }else{
-            $bar->advance();$this->info('');//fix line break
-            $bar->advance();$this->info('');//fix line break
         }
 
         foreach($versions as $version){
@@ -116,14 +117,11 @@ class InstallCommand extends Command
                     $this->error($e->getMessage());
                     return;
                 }
-                $bar->advance();$this->info('');//fix line break
                 $this->info('Task ' . $task->getTitle() . ' Completed!');
             }
         }
 
         $this->installer->saveCompleted();
-
-        $bar->finish();$this->info('');//fix line break
 
         $this->info('Installation Completed!');
 
