@@ -254,6 +254,24 @@ The ```LeeMason\Larastaller\Installer``` class is responsible for matching insta
 It provides no public api usable outside of its duties.
 
 
+## Events
+
+The package provides you with many events which can be hooked into to provide additional functionality:
+
+```php
+LeeMason\Larastaller\Events\AfterInstallEvent(Installer $installer, OutputInterface $output)
+```
+
+The above event is fired before the install process and is passed the Installer instance ```$event->installer```, and an OutputInterface ```$event->output``` allowing you to send messages back to the installer.
+
+
+```php
+LeeMason\Larastaller\Events\BeforeInstallEvent(Installer $installer, OutputInterface $output)
+```
+
+The above event is fired after the install process is completed and is passed the Installer instance ```$event->installer```, and an OutputInterface ```$event->output``` allowing you to send messages back to the installer.
+
+
 ## FAQ
 
 **Why not just use version control?**

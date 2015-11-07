@@ -10,7 +10,10 @@ namespace LeeMason\Larastaller\Commands;
 
 
 use Illuminate\Console\Command;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
+use LeeMason\Larastaller\Events\AfterInstallEvent;
+use LeeMason\Larastaller\Events\BeforeInstallEvent;
 use LeeMason\Larastaller\Installer;
 use LeeMason\Larastaller\TaskRunException;
 
@@ -25,12 +28,15 @@ class InstallCommand extends Command
 
     private $filesystem;
 
+    private $dispatcher;
 
-    public function __construct(Installer $installer, Filesystem $filesystem)
+
+    public function __construct(Installer $installer, Filesystem $filesystem, Dispatcher $dispatcher)
     {
         parent::__construct();
         $this->installer = $installer;
         $this->filesystem = $filesystem;
+        $this->dispatcher = $dispatcher;
     }
 
     public function handle()
@@ -39,6 +45,8 @@ class InstallCommand extends Command
             $this->error('Your application is already installed!');
             return;
         }
+
+        $this->dispatcher->fire(new BeforeInstallEvent($this->installer, $this->getOutput()));
 
         $this->info('Welcome to the installer!');
 
@@ -124,6 +132,8 @@ class InstallCommand extends Command
         $this->installer->saveCompleted();
 
         $this->info('Installation Completed!');
+
+        $this->dispatcher->fire(new AfterInstallEvent($this->installer, $this->getOutput()));
 
     }
 }
