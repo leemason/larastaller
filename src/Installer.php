@@ -99,7 +99,4 @@ class Installer
         $this->installation->save();
     }
 
-    public function run(){
-
-    }
 }

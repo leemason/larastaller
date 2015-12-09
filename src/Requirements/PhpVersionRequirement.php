@@ -14,7 +14,7 @@ use LeeMason\Larastaller\RequirementInterface;
 
 class PhpVersionRequirement extends Requirement implements RequirementInterface
 {
-    public $description = 'PHP version 5.5.0 or more is a requirement of this application.';
+    public $description = 'PHP version 5.5.9 or more is a requirement of this application.';
 
     public $success = 'The PHP version found is acceptable.';
 

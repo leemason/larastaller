@@ -34,7 +34,6 @@ abstract class Field extends Fluent implements FieldInterface
         return $this->get('description', '');
     }
 
-
     public function getValidator($value)
     {
         $validator = Validator::make(

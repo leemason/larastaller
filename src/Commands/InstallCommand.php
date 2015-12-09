@@ -62,7 +62,7 @@ class InstallCommand extends Command
             foreach($messages->get('success') as $message){
                 $this->line($message);
             }
-            $this->error('Whoops, it looks like your system couldn\'t pass all of the requirements! Please address the error and re-run the installer.');
+            $this->error('Whoops, it looks like your system couldn\'t pass all of the requirements! Please address the error(s) and re-run the installer.');
             return;
         }else{
             foreach($messages->all() as $message){
@@ -129,11 +129,11 @@ class InstallCommand extends Command
             }
         }
 
+        $this->dispatcher->fire(new AfterInstallEvent($this->installer, $this->getOutput()));
+
         $this->installer->saveCompleted();
 
         $this->info('Installation Completed!');
-
-        $this->dispatcher->fire(new AfterInstallEvent($this->installer, $this->getOutput()));
 
     }
 }
